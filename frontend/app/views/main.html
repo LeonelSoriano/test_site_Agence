@@ -1,0 +1,200 @@
+
+<div ng-include="'views/_partial/layout.html'"></div>
+ 
+<div class="container">
+
+<div class="row text-center">
+  <div class="btn-group main-option text-center" data-toggle="buttons">
+    <label class="btn btn-success active">
+      <input type="radio" name="options" id="consult-option" checked> Por Consultor
+    </label>
+    <label class="btn btn-success">
+      <input type="radio" name="options" id="client-option"> Por Cliente
+    </label>
+  </div>
+</div>
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <h4>Período</h4>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+      <p class="input-group">
+        <input type="text" class="form-control" uib-datepicker-popup="MM-yyyy"
+          ng-model="popupBefore.dt" is-open="popupBefore.opened"
+          datepicker-options="configurationDatePicker" datepicker-mode="'month'"
+          ng-required="true" close-text="Cerrar" current-text="Hoy" clear-text="Limpiar"
+          ng-click="popupBeforeOpen()" readOnly
+        />
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="popupBeforeOpen()">
+              <i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+      </p>
+
+    </div>
+    <div class="col-sm-6">
+          
+      <p class="input-group">
+        <input type="text" class="form-control" uib-datepicker-popup="MM-yyyy"
+          ng-model="popupAfter.dt" is-open="popupAfter.opened"
+          datepicker-options="configurationDatePicker" datepicker-mode="'month'"
+          ng-required="true" close-text="Cerrar" current-text="Hoy" clear-text="Limpiar"
+          ng-click="popupAfterOpen()" readOnly
+        />
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="popupAfterOpen()">
+              <i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+      </p>
+    </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <dualmultiselect options="consultoresOption"> </dualmultiselect> 
+  </div>
+</div>
+
+<br/>
+<div class="row chart-table" >
+  
+  <div class="row" style="margin-left: 2px; margin-right: 2px">
+    <div class="col-sm-4">
+        <button ng-click="selectRelatorio()" 
+          type="button" class="btn btn-sm btn-block btn-primary">
+            <span class="fa fa-sticky-note" style="font-size:1.3em"></span>
+            <b>Relatorio</b>
+        </button>  
+    </div>
+    <div class="col-sm-4">
+        <button  ng-click="selectBar()"
+          type="button" class="btn btn-sm btn-block btn-primary">
+            <span class="fa fa-bar-chart" style="font-size:1.3em"></span>
+            <b>Gráfico</b>
+        </button>  
+    </div>
+    <div class="col-sm-4">
+        <button  ng-click="selectPizza()"
+          type="button" class="btn btn-sm btn-block btn-primary">
+            <span class="fa fa-pie-chart" style="font-size:1.3em"></span>
+            <b>Pizza</b>
+        </button>  
+    </div>
+  </div>
+  <br/>
+  
+  <div class="relatorio-data" ng-show="activeViewData === 1">
+    
+    <div class="content-table-relatorio" ng-repeat="consultor in dataRelatorio">
+      
+
+ <div class="row">
+    <div class="col-xs-12">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <caption >
+            {{consultor.user}}
+          </caption>
+          <thead>
+            <tr>
+              <th>Período</th>
+              <th>Receita Líquida </th>
+              <th>Custo Fixo</th>
+              <th>Comissão</th>
+              <th>Lucro</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="tableInfo in consultor.values" >
+              <td style="text-align: left;" >{{tableInfo.periodo}}</td>
+              <td>
+                R$ {{tableInfo.liquida
+                .toLocaleString(undefined, { maximumFractionDigits: 2 })}}
+              </td>
+              <td>
+                R$ {{tableInfo.custo.toLocaleString(undefined, { maximumFractionDigits: 2 })}}</td>
+              <td> 
+                R$ {{tableInfo.comision.toLocaleString(undefined, { maximumFractionDigits: 2 })}}
+              </td>
+              <td ng-class="(tableInfo.lucro < 0) ? 'negative-font': ''" >
+                 R$ {{tableInfo.lucro.toLocaleString(undefined, { maximumFractionDigits: 2 })}}
+              </td>
+            </tr>
+            </tbody>
+          <tfoot>
+            <tr>
+              <td style="text-align: left;">Saldo</td>
+              <td>
+                R$ {{consultor.total.liquida.toLocaleString(undefined, { maximumFractionDigits: 2 })}}
+              </td>
+              <td>
+                R$ {{consultor.total.custo.toLocaleString(undefined, { maximumFractionDigits: 2 })}}
+              </td>
+              <td>
+                R$ {{consultor.total.comision.toLocaleString(undefined, { maximumFractionDigits: 2 })}}
+              </td>
+              <td 
+                ng-class="(consultor.total.lucro < 0)? 'negative-font' : 'positive-font'" >
+                R$ {{consultor.total.lucro.toLocaleString(undefined, { maximumFractionDigits: 2 })}}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div><!--end of .table-responsive-->
+    </div>
+  </div>
+
+    </div><!--endrepeat -->
+
+  </div>
+
+
+  <div class="grafico-data" ng-show="activeViewData === 2">
+    <div class="row">
+      <div class="col-xs-12 text-center">
+        <h3>Performance Comercial</h3>
+        <span ng-bind="popupBefore.dt | date:'MM-yyyy'"></span> a
+        <span ng-bind="popupAfter.dt | date:'MM-yyyy'"></span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 text-center">
+        <canvas id="bar" class="chart chart-bar"
+          chart-data="data" chart-labels="labels" chart-series="series"
+           chart-dataset-override="datasetOverride" 
+          >
+
+        </canvas>
+
+      </div>
+    </div>
+
+
+  </div>
+
+
+
+  <div class="pizza-data" ng-show="activeViewData === 3">
+    <div class="row" >
+      <div class="col-xs-12 text-center">
+        <h3>Participacao na receita</h3>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <canvas id="pie" class="chart chart-pie"
+          chart-data="data" chart-labels="labels"
+          chart-options="optionPie">
+        </canvas>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end chart-table -->
+<br/>
+<br/>
+
